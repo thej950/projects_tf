@@ -1,7 +1,3 @@
-# In this terraform file used to working on variable
-# here we pass two type variable one is bool type andother one is string type for the different use cases 
-
-
 provider "aws" {
   region     = "us-east-1"
   access_key = "AKIARVZBY3GJYYYBTQ74"
