@@ -6,7 +6,9 @@
 * Terraform Automate infrastrucher itself Like AWS, GCP, Azure, digital ocean etc..
 * Terraform works with automation softwares like ansible after infra is setup and ready 
 * No pragramming, Its own syntax similar to JSON. 
-	
+
+# Basic Terraform commands
+
 > To validate terraform code is perfect or not if any syntax error
 	
     $ terraform validate 
@@ -31,7 +33,7 @@
 	
     $ terraform destroy 
 	
-
+    
 # terraform.tfstate 
 
 * terraform.tfstate file maintain all the current activity in the main terraform file like creation of ec2 machine information and all resorces information 
