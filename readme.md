@@ -43,6 +43,17 @@
 
 * terraform.tfstate.backup file containe backup of terraform.tfstate file information   
 
+# terraform.lock.hcl
+
+* terrform.lock.hcl file is containe version of the cloud providers and their dependencies for specific configurations 
+* it will help to ensure same version of provider for every time we used consistently across different commands like terraform init and terraform apply 
+
+# .terraform 
+
+* .terraform is folder it containe terraform plugins of our perticular system 
+* it will created when we perform terraform init 
+* automatically download plugins and dependencies which is related our code ad our System Accordingly  
+
 
 	
 	
