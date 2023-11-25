@@ -52,7 +52,7 @@
 
 * .terraform is folder it containe terraform plugins of our perticular system 
 * it will created when we perform terraform init 
-* automatically download plugins and dependencies which is related our code ad our System Accordingly  
+* automatically download plugins and dependencies which is related our code and our System Accordingly  
 
 
 	
