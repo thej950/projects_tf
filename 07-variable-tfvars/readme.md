@@ -53,8 +53,8 @@
 # To pass default values using command line without creating tfvars files 
 - To Apply using command Line 
     
-    $ terraform apply -var="instance_type=t2.micro" -var="environment=test"
+        $ terraform apply -var="instance_type=t2.micro" -var="environment=test"
 
 - To destroy using command Line 
    
-    $ terraform destroy -var="instance_type=t2.micro" -var="environment=test"
+        $ terraform destroy -var="instance_type=t2.micro" -var="environment=test"
