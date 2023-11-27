@@ -4,26 +4,26 @@
 - adding resource aws_instance with key_name with vpc_security_group inside this aws_instace resource add provisioner inside provisioner add file from local path to remote instance path  
 - set connection type for secure way to copy 
 
-    resource "aws_instance" "myec2" {
-        ami                    = "ami-0fc5d935ebf8bc3bc"
-        instance_type          = "t2.micro"
-        key_name               = "aws-key1"
-        vpc_security_group_ids = [aws_security_group.main-sg1.id]
-        tags = {
-            Name = "My-instance"
+        resource "aws_instance" "myec2" {
+            ami                    = "ami-0fc5d935ebf8bc3bc"
+            instance_type          = "t2.micro"
+            key_name               = "aws-key1"
+            vpc_security_group_ids = [aws_security_group.main-sg1.id]
+            tags = {
+                Name = "My-instance"
+            }
+            provisioner "file" {
+                source      = "./test/test-file"
+                destination = "/home/ubuntu/test-file"
+            }
+            connection {
+                type        = "ssh"
+                host        = self.public_ip
+                user        = "ubuntu"
+                private_key = file("C:\\Users\\DELL\\Desktop\\terraorm-work\\provisioners\\file-provisioners\\sshkeys\\aws-key1")
+                timeout     = "4m"
+            }
         }
-        provisioner "file" {
-            source      = "./test/test-file"
-            destination = "/home/ubuntu/test-file"
-        }
-        connection {
-            type        = "ssh"
-            host        = self.public_ip
-            user        = "ubuntu"
-            private_key = file("C:\\Users\\DELL\\Desktop\\terraorm-work\\provisioners\\file-provisioners\\sshkeys\\aws-key1")
-            timeout     = "4m"
-        }
-    }
 
 
 - add security group for inbound and outbound rules open ports 22 
