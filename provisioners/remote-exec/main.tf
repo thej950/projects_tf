@@ -20,7 +20,7 @@ resource "aws_instance" "myec2" {
     type        = "ssh"
     host        = self.public_ip
     user        = "ubuntu"
-    private_key = file("C:\\Users\\DELL\\Desktop\\terraorm-work\\provisioners\\remote-exec\\sshkeys\\aws-key2")
+    private_key = file("C:\\Users\\DELL\\Desktop\\terraform-work\\provisioners\\remote-exec\\sshkeys\\aws-key2")
     timeout     = "4m"
   }
 }

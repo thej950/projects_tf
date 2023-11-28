@@ -20,7 +20,7 @@
                 type        = "ssh"
                 host        = self.public_ip
                 user        = "ubuntu"
-                private_key = file("C:\\Users\\DELL\\Desktop\\terraorm-work\\provisioners\\file-provisioners\\sshkeys\\aws-key1")
+                private_key = file("C:\\Users\\DELL\\Desktop\\terraform-work\\provisioners\\file-provisioners\\sshkeys\\aws-key1")
                 timeout     = "4m"
             }
         }
