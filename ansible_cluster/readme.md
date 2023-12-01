@@ -9,6 +9,8 @@
         region   : us-east-1
         default  : text 
 
+
+
 # Now create a terraform file to setup ansible environemnt on aws cloud 
 - create providers in providers block and specifying region to work 
 
