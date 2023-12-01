@@ -97,6 +97,9 @@ resource "aws_instance" "controller" {
       host        = aws_instance.controller.public_ip
     }
   }
+  tags = {
+    Name = "Controller-Machine"
+  }
 }
 
 resource "aws_instance" "worker-1" {
@@ -107,6 +110,9 @@ resource "aws_instance" "worker-1" {
   vpc_security_group_ids = [aws_security_group.sg-1.id]
   private_ip             = "10.0.1.11"
 
+  tags = {
+    Name = "worker-mchine-1"
+  }
 }
 
 
@@ -117,5 +123,8 @@ resource "aws_instance" "worker-2" {
   subnet_id              = aws_subnet.subnet-1.id
   vpc_security_group_ids = [aws_security_group.sg-1.id]
   private_ip             = "10.0.1.12"
-
+ 
+ tags = {
+   Name = "worker-machine-2"
+ }
 }
