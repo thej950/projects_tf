@@ -8,12 +8,6 @@ resource "aws_subnet" "subnet-1" {
   map_public_ip_on_launch = true
 }
 
-resource "aws_subnet" "subnet-2" {
-  vpc_id                  = aws_vpc.myvpc.id
-  cidr_block              = "10.0.2.0/24"
-  map_public_ip_on_launch = true
-}
-
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.myvpc.id
 }
@@ -32,23 +26,11 @@ resource "aws_route_table_association" "rta-1" {
   route_table_id = aws_route_table.RT-1.id
 }
 
-resource "aws_route_table_association" "rta-2" {
-  subnet_id      = aws_subnet.subnet-2.id
-  route_table_id = aws_route_table.RT-1.id
-}
-
 resource "aws_security_group" "sg-1" {
   vpc_id      = aws_vpc.myvpc.id
   name        = "websg"
   description = "Allow TLS Inbound Traffic"
 
-  ingress {
-    description = "HTTP from VPC"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
   ingress {
     description = "SSH"
     from_port   = 22
