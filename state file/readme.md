@@ -78,3 +78,4 @@
 
 ![Alt text](../images/image-6.png)
 
+- From above state file will be stored in aws s3 bucket it is not available in local system it is mainly usefull when team based environments 
