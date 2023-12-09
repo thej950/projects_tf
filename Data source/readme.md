@@ -2,6 +2,7 @@
 - Terraform Datasource it is way of fetch and use existing information or resources from the infrastrucher that we are actually managing 
 - it will allow to query the external systems (like cloud providers API databases etc... ad use the obtained data wothin our terraform configuration file )
 - we can fetch the data on the providers and use inside terraform file and fetch the data from resource block and providers 
+- using Data source we able to pick up information from providers and hold them and use into resource blocks Dynamically 
 
 # Basic Syntax of Datasource
 
