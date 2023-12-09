@@ -26,7 +26,17 @@
 			region	= "us-east-1"
 			shared_credentials_file	= "C:\Users\DELL\.aws\credentials"
         }
-		
+
+- this is when we excute aws configure automatically inside credentials file will be created in that perticular location (C:\Users\DELL\.aws\credentials)
+- other wise create a file with below syntax
+	
+- $ vim credentials
+
+        [default]
+        aws_access_key_id = AKIARVZBY3GJSE3OYOOB
+        aws_secret_access_key = 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
+	
+
 
 # Export AWS credentials enviroments variables 
 
