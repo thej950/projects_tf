@@ -5,6 +5,7 @@
 	1. Hard coded AWS credentials 
 	2. Shared credentials file
 	3. Export AWS credentials enviroments variables 
+	4. use profile 
 
 
 # Hard coded AWS credentials
@@ -56,4 +57,29 @@
 - after excute terraform init if it is excuting successfully then those access key and secret access key will be exported correctly other wise not 
 
 
+# Profile usage 
+- use profile inside .aws/credentials
 
+		[raju]
+		aws_access_key_id = AKIARVZBY3GJSE3OYOOB
+		aws_secret_access_key = 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
+		[thej]
+		aws_access_key_id = AKIARVZBY3GJZOQ2RTXH
+		aws_secret_access_key = 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
+
+- using above .aws/credentials file implement raju or thej inside providers section
+
+		provider "aws" {
+			region                   = "ap-south-1"
+			profile				     = "thej"
+			}
+
+			resource "aws_instance" "my-ec2" {
+			ami           = "ami-0fc5d935ebf8bc3bc"
+			instance_type = "t2.micro"
+			tags = {
+				Name = "my-instance"
+			}
+		}
+
+- from above terraform file using profile name it will take accesskey and secretkey automatically 
