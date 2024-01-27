@@ -1,6 +1,6 @@
 # In this terraform file i am launching an instance after lauching that instance public IP should be print on terminal
 # using data source block i am hold data of aws_instance on based on filter section instance name should be Terraform EC2 only depends on aws_instance name should be myec2 only 
-# then after hold data of instance information To print Public_ip in terminal after launch instance use output block for defining information to print public_ip of that pperticular instance 
+# then after hold data of instance information To print Public_ip in terminal after launch instance use output block for defining information to print public_ip of that perticular instance 
 
 
 /*
