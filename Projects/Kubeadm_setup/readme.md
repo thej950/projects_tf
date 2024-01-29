@@ -157,9 +157,9 @@
         kubectl get nodes
 
 > output
-
-[ec2-user@Master-Node ~]$ kubectl get nodes
-NAME                            STATUS   ROLES    AGE     VERSION
-ip-172-31-86-242.ec2.internal   Ready    master   11m     v1.19.1
-worker1                         Ready    <none>   2m27s   v1.19.1
-[ec2-user@Master-Node ~]$
+                
+                [ec2-user@Master-Node ~]$ kubectl get nodes
+                NAME                            STATUS   ROLES    AGE     VERSION
+                ip-172-31-86-242.ec2.internal   Ready    master   11m     v1.19.1
+                worker1                         Ready    <none>   2m27s   v1.19.1
+                [ec2-user@Master-Node ~]$
