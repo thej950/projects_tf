@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="725c4c01-454f-4bca-935f-76b9b69ea5c8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../lamda/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../lamda/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="725c4c01-454f-4bca-935f-76b9b69ea5c8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,9 +16,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2bcNodlT3drYvBJmSUj06jCexWO" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -31,7 +29,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/DELL/Desktop/terraform-work/Projects/Jenkins_qa_prod_setup"
+    "last_opened_file_path": "E:/Notes/aws/aws-notes/projects"
   }
 }]]></component>
   <component name="SharedIndexes">
