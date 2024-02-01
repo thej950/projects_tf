@@ -180,7 +180,21 @@
 
         $ ansible all -i hosts -a 'date' 
 
+# output of ping 
 
-
-
-
+        ubuntu@ip-10-0-1-10:~/workspace$ ansible all -i hosts -m ping
+        10.0.1.12 | SUCCESS => {
+            "ansible_facts": {
+                "discovered_interpreter_python": "/usr/bin/python3"
+            },
+            "changed": false,
+            "ping": "pong"
+        }
+        10.0.1.11 | SUCCESS => {
+            "ansible_facts": {
+                "discovered_interpreter_python": "/usr/bin/python3"
+            },
+            "changed": false,
+            "ping": "pong"
+        }
+        ubuntu@ip-10-0-1-10:~/workspace$
