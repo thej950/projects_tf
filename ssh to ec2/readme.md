@@ -74,3 +74,16 @@ Upload Pub file into aws console Manually
  3. Click the "Import Key Pair" button.
  4. Enter a name for the key pair (e.g., mykey) and paste the content of the mykey.pub file into the "Public Key Contents" field.
  5. Click "Import Key Pair.
+
+        variable "ami_key_pair_name" {
+        type    = string
+        default = "aws-key"  # Use the same name you entered when importing the key pair in AWS
+        }
+
+        resource "aws_instance" "example" {
+        ami           = var.ami_id
+        instance_type = var.instance_type
+        key_name      = var.ami_key_pair_name
+        # ... other configurations ...
+        }
+
