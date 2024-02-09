@@ -1,0 +1,100 @@
+provider Linod cloud terraform files
+-------------------------------------
+step1: main terraform file 
+ - vim main.tf
+	 --------------------------
+	 # To setup cloud provider information
+	 terraform {
+	 	required_providers {
+	 		linod			= {
+	 			source		= "linode/linode"
+	 			version		= "1.27.1"
+	 		}
+	 	}
+	 }
+
+	 # Declare the required token variable for Linode 
+	 provider "Linode" {
+	 	token			= var.token
+	 }
+
+	 # Create a Linode instance 
+	 resource "linode_instance" "terraform-web" {
+	 	image					= "linode/ubuntu22.04"
+	 	label					= "example-instance"
+	 	region					= "us-east-1"
+	 	type					= "g6-standard-1"
+	 	root_pass				= var.root_password
+	 	authorized_keys			= [ var.ssh_public_key ]
+	 }
+
+	 # Run a simple task to verify ssh connectivity is ready 
+	 provisioner "remote-exec" {
+	 	inline					= [ "cat /etc/os-release" ]
+	 }
+
+	 	# Configure parameters for ssh so Terraform can connect to the new instance 
+	 	connection {
+	 		type		= "ssh"
+	 		user 		= "root"
+	 		host		= self.ip_address
+	 		private_key	= "${file(var.ssh_private_key)}"
+	 	}
+	 }
+
+	 # Run Ansible playbook against the new instance
+	 provisioner "local-exec" {
+	 	command		= "ansible-playbook -u root -i '${self.ip_address},' -e 'ansible_python_interpreter/usr/bin/py$'"
+	 }
+	-------------------------------------------------------------------
+
+	- vim variable.tf
+	 ------------------------------------------
+	  # set variable contents for use with terraform ans Linode 
+	  variable "token" {
+	  	type	= string
+	  	default = "709471mbldi-089817329hbh"
+	  }
+
+	  variable "root_password" {
+	  	type	= string 
+	  	default = "super_secret_password"
+	  }
+
+	  variable "ssh_private_key" {
+	  	type	= string
+	  	default = "/var/lib/jenkins/.ssh/id_ed25519"
+	  }
+
+	  variable "ssh_public_key" {
+	  	type	= string
+	  	default = "ssh hkaiyioru09982062189 9833-2823487bc1y92y23y09-0jb iuxh33ri0-jhguyjgff"
+	  }
+	 -----------------------------------------------------
+
+ - Create yaml file 
+ 	- vim apache.yml
+ 	  ----------------------------
+ 	  ---
+ 	  - name: Installing apache
+ 	    hosts: all
+ 	    become: yes
+
+ 	    tasks:
+ 	      - name: Install all available updates 
+ 	        apt: 
+ 	          upgrade: dist
+ 	          update_cache: yes
+
+ 	      - name: Install Apache
+ 	        apt: 
+ 	          name: apache2
+ 	          state: latest
+ 	          update_cache: yes 
+ 	  -------------------------------------
+ - create ansible.cfg file in same location 
+ 	- vim ansible.cfg
+ 	  -----------------------------
+ 	  [defaults]
+ 	  host_key_checking = False
+ 	  ------------------------------

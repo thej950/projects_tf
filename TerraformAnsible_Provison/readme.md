@@ -97,7 +97,7 @@ Terraform ansible provision
             provisioner "local-exec" {
                 command = <<-EOT
                 export ANSIBLE_HOST_KEY_CHECKING=False
-
+                ansible-playbook -i ${aws_instance.nginx.public_ip}, --private-key ${local.private_key_path} nginx.yml
                 EOT
             }
         }
