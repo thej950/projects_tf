@@ -1,0 +1,18 @@
+---
+- name: Installing apache
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install all available updates
+      apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Install apache
+      apt:
+        name: apache2
+        state: latest
+        update_cache: yes
+
+

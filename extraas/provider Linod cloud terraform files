@@ -1,4 +1,4 @@
-provider Linod cloud terraform files
+provider Linode cloud terraform files
 -------------------------------------
 step1: main terraform file 
  - vim main.tf
