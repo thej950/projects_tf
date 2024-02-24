@@ -1,13 +1,13 @@
+
 variable "access_key" { #Todo: uncomment the default value and add your access key.
   description = "Access key to AWS console"
-  default     = "AKIA2LW3XXCQTVAGGKJF"
+  default     = "AKIA2LW3XXCQ57CHYQHA"
 }
 
 variable "secret_key" { #Todo: uncomment the default value and add your secert key.
   description = "Secret key to AWS console"
-  default     = "Du+HrxQEUwiBFsv9bztMu2t7+itcMejF0CBBqNYs"
+  default     = "5Q2dj0ee+scxCO4+xPOY5pDxSURjcGwIZ3Mw/zQI"
 }
-
 variable "ami_key_pair_name" { #Todo: uncomment the default value and add your pem key pair name. Hint: don't write '.pem' exction just the key name
   default = "mykey"
 }

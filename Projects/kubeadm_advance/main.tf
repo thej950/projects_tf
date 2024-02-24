@@ -155,7 +155,7 @@ resource "aws_instance" "ec2_instance_msr" {
     delete_on_termination = true
   }
   tags = {
-    Name = "k8s_msr_1"
+    Name = "k8s-master-1"
   }
   user_data_base64 = base64encode("${templatefile("scripts/install_k8s_msr.sh", {
 
@@ -187,7 +187,7 @@ resource "aws_instance" "ec2_instance_wrk" {
     delete_on_termination = true
   }
   tags = {
-    Name = "k8s_wrk_${count.index + 1}"
+    Name = "k8s-worker_${count.index + 1}"
   }
   user_data_base64 = base64encode("${templatefile("scripts/install_k8s_wrk.sh", {
 

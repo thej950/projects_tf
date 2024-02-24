@@ -2,8 +2,8 @@
 
 ######### ** FOR MASTER NODE ** #########
 
-hostname k8s-msr-1
-echo "k8s-msr-1" > /etc/hostname
+hostname k8s-Master
+echo "k8s-Master" > /etc/hostname
 
 export AWS_ACCESS_KEY_ID=${access_key}
 export AWS_SECRET_ACCESS_KEY=${private_key}
