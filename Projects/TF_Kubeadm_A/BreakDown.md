@@ -499,5 +499,3 @@ echo "complete -o default -F __start_kubectl k" >> /root/.bashrc
 1. **Configures the master node** for Kubernetes cluster management.
 2. **Initializes the cluster** with a pod network.
 3. Prepares the master node to allow worker nodes to join via the `join_command.sh`.
-
-Let me know if you'd like further clarification!
