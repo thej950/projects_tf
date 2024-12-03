@@ -1,12 +1,45 @@
-# kubeadm setup 
-- Install kubeadm and kubectl and kubelet and docker on every machine
-- After complete installation of all softwares 
+# Kubernetes Cluster Setup with kubeadm
 
-# Connect to Master machine
-- for initialization of api-server on master machine 
+This guide outlines the steps to set up a Kubernetes cluster using **kubeadm**, with a **master node** and **worker nodes**.
+
+---
+
+## Prerequisites
+
+1. **Operating System**: Linux-based (Ubuntu, CentOS, etc.)
+2. **Tools to Install**:
+   - **kubeadm**
+   - **kubectl**
+   - **kubelet**
+   - **docker**
+3. **System Requirements**:
+   - All nodes should have unique hostnames.
+   - Ensure communication between nodes (check firewalls and security groups).
+
+#### Post-Initialization:
+1. Configure `kubectl` for the current user:
+   ```bash
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
+2. Note the `kubeadm join` command output for later use (for worker nodes).
+
+
+---
+### Initialize the Kubernetes Control Plane
+
+#### On Master Node:
+Run the following command, replacing `<Master_Private_IP>` with the private IP of your master node:
 ```bash
-kubeadm init --apiserver-advertise-address=<Master_Private_IP>  --pod-network-cidr=192.168.0.0/16
+sudo kubeadm init --apiserver-advertise-address=<Master_Private_IP> --pod-network-cidr=192.168.0.0/16
 ```
+
+Example:
+```bash
+sudo kubeadm init --apiserver-advertise-address=172.31.86.242 --pod-network-cidr=192.168.0.0/16
+```
+
 ```bash
 [root@ip-172-31-86-242 ~]# kubeadm init --apiserver-advertise-address=172.31.86.242  --pod-network-cidr=192.168.0.0/16
 I0129 11:22:20.720465   18242 version.go:252] remote version is much newer: v1.29.1; falling back to: stable-1.19
@@ -83,7 +116,14 @@ kubeadm join 172.31.86.242:6443 --token lum8l6.jq8yqw60fvanxeai \
 ```
 > Above command will also proide token to join worket machines
 
-# Now deploy calico network 
+### Now deploy calico network 
+### Step 3: Deploy a Pod Network (Calico)
+
+#### On Master Node:
+Install the Calico network plugin to enable communication between pods:
+```bash
+kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
+```
 
 ```bash
 [ec2-user@ip-172-31-86-242 ~]$ kubectl apply -f https://docs.projectcalico.org/v3.9/manifests/calico.yaml
@@ -113,7 +153,7 @@ deployment.apps/calico-kube-controllers created
 serviceaccount/calico-kube-controllers created
 [ec2-user@ip-172-31-86-242 ~]$
 ```
-# To generate slave token for join workers 
+### To generate slave token for join workers 
 
 ```bash
 kubeadm token create --print-join-command
@@ -124,10 +164,18 @@ W0129 11:28:58.179093   23550 configset.go:348] WARNING: kubeadm cannot validate
 kubeadm join 172.31.86.242:6443 --token i8maao.igve7u8nd2gmc0ml     --discovery-token-ca-cert-hash sha256:99a3363cce8cbbde4d01e6ffa4afc6cb86266f3f5e86938248cd5c81e15da730
 [ec2-user@ip-172-31-86-242 ~]$
 ```
-# ON worker node
+---
+
+### ON worker node
+
+Example:
+```bash
+sudo kubeadm join 172.31.86.242:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
+```
+
 
 ```bash
-        kubeadm join 172.31.86.242:6443 --token i8maao.igve7u8nd2gmc0ml     --discovery-token-ca-cert-hash sha256:99a3363cce8cbbde4d01e6ffa4afc6cb86266f3f5e86938248cd5c81e15da730
+kubeadm join 172.31.86.242:6443 --token i8maao.igve7u8nd2gmc0ml     --discovery-token-ca-cert-hash sha256:99a3363cce8cbbde4d01e6ffa4afc6cb86266f3f5e86938248cd5c81e15da730
 ```
 ```bash
 [root@Worker1 ~]# kubeadm join 172.31.86.242:6443 --token i8maao.igve7u8nd2gmc0ml     --discovery-token-ca-cert-hash sha256:99a3363cce8cbbde4d01e6ffa4afc6cb86266f3f5e86938248cd5c81e15da730
@@ -151,7 +199,8 @@ Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
 [root@Worker1 ~]#
 ```
 
-# On Master Node 
+# Verify On Master Node 
+1. Check the status of all nodes:
 ```bash
 kubectl get nodes
 ```
@@ -162,3 +211,16 @@ ip-172-31-86-242.ec2.internal   Ready    master   11m     v1.19.1
 worker1                         Ready    <none>   2m27s   v1.19.1
 [ec2-user@Master-Node ~]$
 ```
+
+2. Check the status of pods:
+   ```bash
+   kubectl get pods --all-namespaces
+   ```
+
+### Troubleshooting Tips
+- **Networking Issues**: Ensure that ports 6443 (API server), 10250 (kubelet), and pod network ports are open.
+- **Worker Node Not Ready**: Verify `kubelet` logs using:
+  ```bash
+  journalctl -u kubelet
+  ```
+- **Docker Compatibility**: Ensure the installed Docker version is compatible with Kubernetes.
