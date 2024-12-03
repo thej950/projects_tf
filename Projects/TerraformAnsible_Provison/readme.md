@@ -217,7 +217,7 @@ This approach ensures efficient infrastructure provisioning and configuration ma
 
 
 ### Below code is for using Local variables 
-```
+```hcl
 locals {
   aws_region          = "us-east-1"
   ssh_user            = "ubuntu"
