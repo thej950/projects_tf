@@ -1,191 +1,216 @@
-Ansible Provision By Terraform 
--------------------------------
-- This Need To Implement on Linux machine
-- Install ansible and terraform and awscli tool in Local machine where this need to perform 
-- Here we setup machine with nginx installation on that using Ansible roles 
+provisioning AWS EC2 instances using Terraform and configuring them with Ansible to install Nginx. 
 
-Terraform ansible provision
-----------------------------
-## STEP1: CRAETE KEYPAIR IN AWS AND DOWNLOAD IN TO LOCAL MACHINE "ansible1"
+---
 
-## STEP2: CREATE A yaml FILE FOR RUNNING A ROLE
- - vim nginx.yml
+## **Ansible Provisioning via Terraform**
 
-        ---
-        - name: Install Nginx
-          hosts: all
-          remote_ user: ubuntu
-          become:  yes
-        
-          roles:
-           - nginx
-    
-## STEP3: NOW CREATE ROLES FOLDER UNDER ROLES CREATE NGINX FOLDER AFTER CREATE TASKS FOLDER UNDER TASKS FOLDER CREATE MAIN.YML FILE TO INCLUDE TASKS FOR NGINX TO INSTALL 
+This guide covers deploying EC2 instances on AWS and provisioning them with Nginx using Terraform and Ansible. The setup supports both single and multiple instances.
 
- - mkdir -p roles/nginx/tasks
- - vim roles/nginx/tasks/main.yml
+### **Prerequisites**
+1. A Linux system with **Terraform**, **Ansible**, and **AWS CLI** installed.
+2. AWS credentials configured via `aws configure`.
+3. SSH key pair created in AWS and available locally (e.g., `ansible1.pem`).
 
-        ---
-        - name: Ensure Nginx install with latest only
-          apt: 
-            name: nginx
-            state: latest
-        - name: Make sure Nginx is Running
-          systemd:
-            name: nginx
-            state: started
+---
 
+### **Steps**
 
-## STEP4: CREATE MAIN.TF FILE in current workspace location
- - vim main.tf
+#### **Step 1: Create AWS Key Pair**
+1. In the AWS Management Console, create a key pair named `ansible1`.
+2. Download the `.pem` file to your local machine (e.g., `~/Downloads/ansible1.pem`).
+3. Set appropriate permissions:
+   ```bash
+   chmod 400 ~/Downloads/ansible1.pem
+   ```
 
-        locals {
-            ssh_user         = "ubuntu"
-            key_name         = "ansible1"
-            private_key_path = "~/Downloads/ansible1.pem"
-        }
+---
 
-        provider "aws" {
-            region = "us-east-1"
-        }
+#### **Step 2: Create Ansible Playbook**
+1. Create a playbook `nginx.yml` to configure Nginx using roles:
+   ```yaml
+   ---
+   - name: Install Nginx
+     hosts: all
+     remote_user: ubuntu
+     become: yes
+     roles:
+       - nginx
+   ```
 
-        resource "aws_security_group" "nginx-sg" {
-            name = "nginx_access"
+2. Create the role directory structure:
+   ```bash
+   mkdir -p roles/nginx/tasks
+   ```
 
-            ingress {
-                from_port   = 22
-                to_port     = 22
-                protocol    = "tcp"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-            ingress {
-                from_port   = 80
-                to_port     = 80
-                protocol    = "tcp"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-            egress {
-                from_port   = 0
-                to_port     = 0
-                protocol    = "-1"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-        }
+3. Define tasks for the Nginx role in `roles/nginx/tasks/main.yml`:
+   ```yaml
+   ---
+   - name: Install Nginx
+     apt:
+       name: nginx
+       state: latest
 
-        resource "aws_instance" "nginx" {
-            ami                         = "ami-0c7217cdde317cfec"
-            subnet_id                   = "subnet-0b102238e4cbdda46"
-            instance_type               = "t2.micro"
-            security_groups             = [aws_security_group.nginx-sg.id]
-            associate_public_ip_address = true
-            key_name                    = local.key_name
+   - name: Ensure Nginx is running
+     systemd:
+       name: nginx
+       state: started
+   ```
 
-            tags = {
-                Name = "Nginx-Machine"
-            }
+---
 
-            provisioner "remote-exec" {
-                inline = ["echo 'wait untill ssh is ready'"]
+#### **Step 3: Configure Terraform**
+1. Create a `main.tf` file to define resources and provision EC2 instances.
 
-                connection {
-                type        = "ssh"
-                user        = local.ssh_user
-                private_key = file(local.private_key_path)
-                host        = aws_instance.nginx.public_ip
-                }
-            }
-            provisioner "local-exec" {
-                command = <<-EOT
-                export ANSIBLE_HOST_KEY_CHECKING=False
-                ansible-playbook -i ${aws_instance.nginx.public_ip}, --private-key ${local.private_key_path} nginx.yml
-                EOT
-            }
-        }
+**Variables and Provider Configuration**
+```hcl
+locals {
+  ssh_user         = "ubuntu"
+  key_name         = "ansible1"
+  private_key_path = "~/Downloads/ansible1.pem"
+}
 
-        output "nginx_ip" {
-            value = "aws_instance.nginx.public_ip"
-        }
+provider "aws" {
+  region = "us-east-1"
+}
+```
 
-## STEP5: CREATE ANSIBLE CONFIG FILE 
- - vim ansible.cfg 
-    
-        [defaults]
-        host_key_checking = False
+**Security Group**
+```hcl
+resource "aws_security_group" "nginx_sg" {
+  name = "nginx_access"
 
-## STEP6: EXCUTE TERRAFORM COMMANDS
- - terraform init 
- - terraform plan 
- - terraform apply 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
 
-# below Code for multiple machines to create 
+**Single EC2 Instance**
+```hcl
+resource "aws_instance" "nginx" {
+  ami                         = "ami-0c7217cdde317cfec"
+  subnet_id                   = "subnet-0b102238e4cbdda46"
+  instance_type               = "t2.micro"
+  security_groups             = [aws_security_group.nginx_sg.id]
+  associate_public_ip_address = true
+  key_name                    = local.key_name
 
-        locals {
-            ssh_user         = "ubuntu"
-            key_name         = "ansible1"
-            private_key_path = "~/Downloads/ansible1.pem"
-        }
+  tags = {
+    Name = "Nginx-Machine"
+  }
 
-        provider "aws" {
-            region = "us-east-1"
-        }
+  provisioner "remote-exec" {
+    inline = ["echo 'Waiting for SSH access...'"]
 
-        resource "aws_security_group" "nginx-sg" {
-            name = "nginx_access"
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = self.public_ip
+    }
+  }
 
-            ingress {
-                from_port   = 22
-                to_port     = 22
-                protocol    = "tcp"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-            ingress {
-                from_port   = 80
-                to_port     = 80
-                protocol    = "tcp"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-            egress {
-                from_port   = 0
-                to_port     = 0
-                protocol    = "-1"
-                cidr_blocks = ["0.0.0.0/0"]
-            }
-        }
+  provisioner "local-exec" {
+    command = <<-EOT
+    export ANSIBLE_HOST_KEY_CHECKING=False
+    ansible-playbook -i ${self.public_ip}, --private-key ${local.private_key_path} nginx.yml
+    EOT
+  }
+}
 
-        resource "aws_instance" "nginx" {
-            count                       = 3
-            ami                         = "ami-0c7217cdde317cfec"
-            subnet_id                   = "subnet-0b102238e4cbdda46"
-            instance_type               = "t2.micro"
-            security_groups             = [aws_security_group.nginx-sg.id]
-            associate_public_ip_address = true
-            key_name                    = local.key_name
+output "nginx_ip" {
+  value = aws_instance.nginx.public_ip
+}
+```
 
-            tags = {
-                Name = "Nginx-Machine-${count.index + 1}"
-            }
+**Multiple Instances**
+Use the `count` meta-argument to create multiple instances:
+```hcl
+resource "aws_instance" "nginx" {
+  count                       = 3
+  ami                         = "ami-0c7217cdde317cfec"
+  subnet_id                   = "subnet-0b102238e4cbdda46"
+  instance_type               = "t2.micro"
+  security_groups             = [aws_security_group.nginx_sg.id]
+  associate_public_ip_address = true
+  key_name                    = local.key_name
 
-            provisioner "remote-exec" {
-                inline = ["echo 'wait until ssh is ready'"]
+  tags = {
+    Name = "Nginx-Machine-${count.index + 1}"
+  }
 
-                connection {
-                type        = "ssh"
-                user        = local.ssh_user
-                private_key = file(local.private_key_path)
-                host        = self.public_ip
-                }
-            }
+  provisioner "remote-exec" {
+    inline = ["echo 'Waiting for SSH access...'"]
 
-            provisioner "local-exec" {
-                command = <<-EOT
-                export ANSIBLE_HOST_KEY_CHECKING=False
-                ansible-playbook -i ${self.public_ip}, --private-key ${local.private_key_path} nginx.yml
-                EOT
-            }
-        }
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = self.public_ip
+    }
+  }
 
-        output "nginx_ips" {
-            value = aws_instance.nginx[*].public_ip
-        }
+  provisioner "local-exec" {
+    command = <<-EOT
+    export ANSIBLE_HOST_KEY_CHECKING=False
+    ansible-playbook -i ${self.public_ip}, --private-key ${local.private_key_path} nginx.yml
+    EOT
+  }
+}
+
+output "nginx_ips" {
+  value = aws_instance.nginx[*].public_ip
+}
+```
+
+---
+
+#### **Step 4: Configure Ansible**
+Create an `ansible.cfg` file:
+```ini
+[defaults]
+host_key_checking = False
+```
+
+---
+
+#### **Step 5: Deploy with Terraform**
+1. Initialize Terraform:
+   ```bash
+   terraform init
+   ```
+2. Review the plan:
+   ```bash
+   terraform plan
+   ```
+3. Apply the configuration:
+   ```bash
+   terraform apply
+   ```
+
+---
+
+### **Key Features**
+- **Reusable Playbook**: The Ansible playbook uses roles, making it modular and scalable.
+- **Dynamic IP Handling**: Terraform outputs public IPs for use with Ansible.
+- **Multiple Instances**: Easily scale EC2 instances with `count`.
+- **Seamless Integration**: Terraform provisions instances, while Ansible handles software setup.
+
+This approach ensures efficient infrastructure provisioning and configuration management, leveraging Terraform and Ansible's strengths.
