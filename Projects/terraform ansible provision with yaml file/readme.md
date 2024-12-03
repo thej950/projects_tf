@@ -1,8 +1,17 @@
-# apache setup using ansible playbook with Terraform 
-- This should be implement on linux 
-- install ansible
-- install terraform 
-- install awscli 
+### Setup apache on a Linux instance using Terraform and Ansible.
+### Install Required Tools
+1. **Terraform**: [Installation Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+2. **Ansible**: [Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+3. **AWS CLI**: [Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+
+### **Step 2: Generate SSH Keys**
+Run the following command to generate SSH keys:
+```bash
+ssh-keygen -t ed25519 -f ./sshkeys/aws_key -q -N ""
+```
+- **`aws_key`** is the key name. 
+- Copy the content of the public key (`aws_key.pub`) to use in the Terraform configuration.
+
 
 1. write main.tf file with local variables 
 2. write apache yaml file for installation of apache
@@ -15,15 +24,10 @@
 
  - above command used to run ansible playbook from local machine to excute on remote machine 
 
- 
----
-### **Terraform File Explanation: EC2 Instance Setup with Ansible Provisioning**
-
-This Terraform configuration sets up an AWS EC2 instance and provisions it with Apache using an Ansible playbook. Below is a detailed breakdown of each section.
 
 ---
-
-### **1. Local Variables**
+### **Step 3: Terraform Configuration**
+### **3.1 Local Variables**
 The `locals` block simplifies the configuration by defining reusable variables:
 ```hcl
 locals {
@@ -36,7 +40,7 @@ locals {
 }
 ```
 
-### **2. AWS Provider**
+### **3.2 AWS Provider**
 Defines the AWS region for the infrastructure:
 ```hcl
 provider "aws" {
@@ -46,7 +50,7 @@ provider "aws" {
 
 ---
 
-### **3. Key Pair Creation**
+### **3.3 Key Pair Creation**
 The `aws_key_pair` resource creates an SSH key pair on AWS. This is used to access the EC2 instance:
 ```hcl
 resource "aws_key_pair" "mykey" {
@@ -57,7 +61,7 @@ resource "aws_key_pair" "mykey" {
 
 ---
 
-### **4. Security Group**
+### **3.4 Security Group**
 Defines the firewall rules to allow incoming SSH (port 22) and HTTP (port 80) traffic:
 ```hcl
 resource "aws_security_group" "apache-sg" {
@@ -91,7 +95,7 @@ resource "aws_security_group" "apache-sg" {
 
 ---
 
-### **5. EC2 Instance**
+### **3.5 EC2 Instance**
 Creates the EC2 instance and provisions it with Ansible:
 ```hcl
 resource "aws_instance" "apache-server" {
@@ -132,6 +136,64 @@ Runs an Ansible playbook (`apache.yml`) to configure Apache on the instance:
 - The `--private-key` flag specifies the private key for SSH authentication.
 
 ---
+### **Step 4: Ansible Playbook**
+
+#### **apache.yml**
+This playbook installs and configures Apache on the instance:
+```yaml
+---
+- name: Setup Apache Web Server
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Ensure Apache is installed
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Ensure Apache is running
+      systemd:
+        name: apache2
+        state: started
+        enabled: yes
+```
+
+### **Step 5: Ansible Configuration**
+
+#### **ansible.cfg**
+Create the configuration file to manage Ansible's behavior:
+```ini
+[defaults]
+host_key_checking = False
+inventory = ./inventory
+```
+
+---
+### **Step 6: Execute Terraform**
+
+#### **Commands**
+1. Initialize Terraform:
+   ```bash
+   terraform init
+   ```
+2. Validate the configuration:
+   ```bash
+   terraform validate
+   ```
+3. Plan the deployment:
+   ```bash
+   terraform plan
+   ```
+4. Apply the configuration:
+   ```bash
+   terraform apply
+   ```
+   Confirm the changes when prompted.
+
+---
+
 
 ### **6. Key Features**
 1. **Reusability**: Using local variables makes the configuration modular and reusable.
@@ -141,29 +203,10 @@ Runs an Ansible playbook (`apache.yml`) to configure Apache on the instance:
 
 ---
 
-### **How to Use**
-1. **Initialize Terraform**:
+### **Verification**
+1. Use the public IP from the Terraform output.
+2. Access `http://<instance-public-ip>` to verify Apache is running.
+3. Ensure the EC2 instance is reachable via SSH:
    ```bash
-   terraform init
+   ssh -i ./sshkeys/aws_key ubuntu@<instance-public-ip>
    ```
-2. **Validate the Configuration**:
-   ```bash
-   terraform validate
-   ```
-3. **Plan the Deployment**:
-   ```bash
-   terraform plan
-   ```
-4. **Deploy the Infrastructure**:
-   ```bash
-   terraform apply
-   ```
-   Confirm the changes when prompted.
-
-5. **Verify**:
-   - Use the Terraform output to get the public IP.
-   - Check if Apache is installed and running by visiting `http://<instance-public-ip>`.
-
----
-
-This setup ensures a streamlined deployment process, combining Terraform's infrastructure automation with Ansible's configuration management.
