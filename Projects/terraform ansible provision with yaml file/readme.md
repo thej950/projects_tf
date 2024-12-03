@@ -1,5 +1,5 @@
 ### Setup apache on a Linux instance using Terraform and Ansible.
-### Install Required Tools
+### Install Required Tools **Local Machine**
 1. **Terraform**: [Installation Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 2. **Ansible**: [Installation Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 3. **AWS CLI**: [Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
